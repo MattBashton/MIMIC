@@ -1,12 +1,5 @@
-## Shiny server for MB Sequenom Classification
-## Matthew Bashton Feb 2015 shiny Classifier version 1.0 parallel
-## Reactive isolation overhaul and graph download options added 20th Feb 2015
-## Source Reza Rafiee Sequenom Classifiation: Web-basedSeqClassifierv3.1_08Dec14.R
-## Various updates to code in-line with Reza's current code classifier v3.2.1 
-
-
-# Change in production code (you'll have to put the classification files in the same location as the source)
-setwd("~/Dropbox/INSTINCT/Shiny/3.3.4p")
+## Shiny server for MB MassArray Classification 
+## Matthew Bashton 2014-2016
 
 ## load libraries
 library(shiny)
@@ -600,7 +593,7 @@ shinyServer(function(input, output) {
       # Index out final element of grp.sum to get rid of unwanted final abline
       grp.sum <- grp.sum[1:length(grp.sum)-1]
       abline(v=grp.sum)
-      lines(col="black",lwd=2,new.maxProbs[order(new.maxProbsWhich,new.maxProbs)])
+      #lines(col="black",lwd=2,new.maxProbs[order(new.maxProbsWhich,new.maxProbs)])
       points(col=new.maxProbsCol[order(new.maxProbsWhich,new.maxProbs)],pch=19, new.maxProbs[order(new.maxProbsWhich,new.maxProbs)])
       legend("bottomleft", legend = c("WNT", "SHH", "Grp3", "Grp4"), col=c("blue", "red", "yellow2", "darkgreen"), pch=19)   
       axis(2, las=2)

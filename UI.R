@@ -1,4 +1,4 @@
-## Matthew Basthon 2014-2015
+## Matthew Basthon 2014-2016
 ## Shiny UI for test Sequenom classifier 
 
 library(shiny) # load shiny at beginning at both scripts
@@ -32,7 +32,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
         tabPanel('Sample QC', br(), p(), textOutput("fs")),
         tabPanel('β-values', dataTableOutput('Beta'), br(), downloadButton('downloadBeta', 'Download'), p()),
         tabPanel('About',
-                 h4("Sequenom web classifier version 3.3.4p"),
+                 h4("MIMIC version 3.3.4p"),
                  br(),
                  p(strong("Machine leanring and classifier code: "), a("Reza Rafiee", href="mailto:Gholamreza.Rafiee@newcastle.ac.uk?subject=Sequenom classifier website")),
                  p(strong("Shiny web code and adaptation: "), a("Matthew Bashton", href="mailto:matthew.bashton@newcastle.ac.uk?subject=Sequenom classifier website")),
@@ -42,6 +42,8 @@ shinyUI(fluidPage(theme = shinytheme("united"),
         )
       ), # End of tabsetPanel
       br(),
+      hr(),
+      p("WARNING: MIMIC is for research use only, and should only be used on samples with a confirmed histopathalogical background of medulloblastoma."),
       hr(),
       img(src = "nicr.png"), img(src = "ncl.png"),
       br()
