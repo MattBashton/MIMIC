@@ -393,6 +393,9 @@ shinyServer(function(input, output) {
       for (i in i:length(failed.samples)) {
         new.results.df <- rbind(new.results.df, c(failed_sample_names[i], "-", NA, "Fail"))
       } 
+      # Convert to percentage (because medics)
+      new.results.df[,3] <- as.character(as.numeric(new.results.df[,3])*100)
+      colnames(new.results.df)[3] <- "Probability %"
       # Now return the df but with NAs replaced by -
       new.results.df[is.na(new.results.df)] <- "-"
       # Sort via sample ID (correctly)
@@ -401,6 +404,9 @@ shinyServer(function(input, output) {
       # Where we don't have any failed samples simply return the df but with NAs
       # replaced by -
     } else {
+      # Convert to percentage (because medics)
+      thresholded_results.df[,3] <- as.character(as.numeric(thresholded_results.df[,3])*100)
+      colnames(thresholded_results.df)[3] <- "Probability %"
       thresholded_results.df[is.na(thresholded_results.df)] <- "-"
       # Sort via sample ID (correctly)
       thresholded_results.df <- thresholded_results.df[mixedorder(thresholded_results.df[,1]),]
@@ -441,17 +447,24 @@ shinyServer(function(input, output) {
         for (i in i:length(failed.samples)) {
           new.results.df <- rbind(new.results.df, c(failed_sample_names[i], "-", NA, "Fail"))
         } 
+        # Convert to percentage (because medics)
+        new.results.df[,3] <- as.character(as.numeric(new.results.df[,3])*100)
+        colnames(new.results.df)[3] <- "Probability %"
         # Now return the df but with NAs replaced by -
         new.results.df[is.na(new.results.df)] <- "-"
         # Sort via sample ID (correctly)
         new.results.df <- new.results.df[mixedorder(new.results.df[,1]),]
+        
         write.csv(new.results.df, file, row.names = FALSE) 
         # Where we don't have any failed samples simply return the df but with NAs
         # replaced by -
       } else {
+        # Convert to percentage (because medics)
+        thresholded_results.df[,3] <- as.character(as.numeric(thresholded_results.df[,3])*100)
         thresholded_results.df[is.na(thresholded_results.df)] <- "-"
         # Sort via sample ID (correctly)
         thresholded_results.df <- thresholded_results.df[mixedorder(thresholded_results.df[,1]),]
+        colnames(thresholded_results.df)[3] <- "Probability %"
         write.csv(thresholded_results.df, file, row.names = FALSE) 
       }
       # End failed sample injector
@@ -502,7 +515,7 @@ shinyServer(function(input, output) {
     probe_threshold <- classified_data$probe_threshold
     
     if (length(failed.samples) > 0) {
-      c(length(failed.samples), "sample(s) failed probe QC having", probe_threshold, "or more missing probes:", paste(failed_sample_names, collapse = ", "))
+      c(length(failed.samples), "sample(s) failed Probe QC having", probe_threshold, "or more missing probes:", paste(failed_sample_names, collapse = ", "))
     } else if (length(failed.samples) == 0) {
       "All samples passed missing probe QC"
     }
@@ -679,6 +692,7 @@ shinyServer(function(input, output) {
     betas <- cbind(rownames(classified_data$Sample.test), betas)
     colnames(betas) <- c("Probe ID", colnames(betas)[-1])
     betas <- betas[order(betas[,"Plex"], betas[,"Probe ID"]),]
+    betas <- betas[,mixedorder(colnames(betas))]
     betas
   })
   
@@ -693,6 +707,7 @@ shinyServer(function(input, output) {
       betas <- cbind(rownames(classified_data$Sample.test), betas)
       colnames(betas) <- c("Probe ID", colnames(betas)[-1])
       betas <- betas[order(betas[,"Plex"], betas[,"Probe ID"]),]
+      betas <- betas[,mixedorder(colnames(betas))]
       write.csv(betas, file, row.names = FALSE)
     }
   )

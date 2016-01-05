@@ -25,9 +25,9 @@ shinyUI(fluidPage(theme = shinytheme("united"),
     mainPanel( # all of the output elements go here
       tabsetPanel(
         id = 'sequenom',
-        tabPanel('Classification Table', dataTableOutput('classification_table'), br(), downloadButton('downloadClassification', 'Download table as .csv'),p(), br(), textOutput("time")),
+        tabPanel('Classification Table', dataTableOutput('classification_table'), br(), helpText("Unclassifiable samples are those for which a confident subgroup call could not be made"), br(), downloadButton('downloadClassification', 'Download table as .csv'),p(), br(), textOutput("time")),
         #tabPanel('Classification Plot', plotOutput("classifierPlot", height = "640", width = "720"), br(), textOutput("time")),
-        tabPanel('Classification Plot', plotOutput("classifierPlot", height = "640", width = "auto"), br(), downloadButton('PlotDownload', 'Download plot as high-res .png'), p()),
+        tabPanel('Classification Plot', plotOutput("classifierPlot", height = "640", width = "auto"), br(), helpText("Unclassifiable and Probe QC failed samples are not shown in this plot"), br(), downloadButton('PlotDownload', 'Download plot as high-res .png'), p()),
         tabPanel('Informative Probes Table', dataTableOutput('mp'), br(), downloadButton('downloadMissing', 'Download table as .csv'), p()),
         tabPanel('Sample QC', br(), p(), textOutput("fs")),
         tabPanel('β-values', dataTableOutput('Beta'), br(), downloadButton('downloadBeta', 'Download table as .csv'), p()),
