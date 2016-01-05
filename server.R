@@ -517,8 +517,30 @@ shinyServer(function(input, output) {
     if (length(failed.samples) > 0) {
       c(length(failed.samples), "sample(s) failed Probe QC having", probe_threshold, "or more missing probes:", paste(failed_sample_names, collapse = ", "))
     } else if (length(failed.samples) == 0) {
-      "All samples passed missing probe QC"
+      "All samples passed missing Probe QC"
     }
+    
+  })
+  
+  ###################################
+  
+  
+  # Output number of unclassifable samples 
+  
+  # List samples (if any) that could not be classified above the threshold
+  output$fc<- renderText({
+    classified_data <- classifier()
+    if (is.null(classified_data)) return(NULL)
+  
+    results.df <- classified_data$results.df
+    unclassifiable <- results.df[results.df[3] < threshold, 1]
+  
+    if (length(unclassifiable) > 0) {
+      c(length(unclassifiable), "samples(s) could not be confidently assigned a subgroup call:", paste(unclassifiable, collapse = ", "))
+    } else if (length(unclassifiable) == 0) {
+      "All samples were successfully assigned a subgroup"
+    }
+    
   })
   
   ###################################
