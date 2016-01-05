@@ -469,7 +469,8 @@ shinyServer(function(input, output) {
     classified_data <- classifier()
     if (is.null(classified_data)) return(NULL)
     missing_summary <- classified_data$missing_summary
-    missing_table <- data.frame(rownames(missing_summary), 17-missing_summary[, 1], row.names=NULL)
+    missing_table <- data.frame(rownames(missing_summary), 17-missing_summary[, 1], row.names=NULL, stringsAsFactors = FALSE)
+    missing_table <- missing_table[mixedorder(missing_table[,1]),]
     colnames(missing_table) <- c("Sample", "Number of Informative Probes")
     missing_table
   })
@@ -480,7 +481,8 @@ shinyServer(function(input, output) {
       classified_data <- classifier()
       if (is.null(classified_data)) return(NULL)
       missing_summary <- classified_data$missing_summary
-      missing_table <- data.frame(rownames(missing_summary), 17-missing_summary[, 1], row.names=NULL)
+      missing_table <- data.frame(rownames(missing_summary), 17-missing_summary[, 1], row.names=NULL, stringsAsFactors = FALSE)
+      missing_table <- missing_table[mixedorder(missing_table[,1]),]
       colnames(missing_table) <- c("Sample", "Number of Informative Probes")
       write.csv(missing_table, file, row.names = FALSE)
     }
