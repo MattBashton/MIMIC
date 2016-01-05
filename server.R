@@ -1,12 +1,13 @@
 ## Shiny server for MB MassArray Classification 
 ## Matthew Bashton 2014-2016
+## Based on classifier code written by Rezza Rafiee
 
 ## load libraries
 library(shiny)
 library(e1071) #for SVM classifier
 library(Amelia) #for multiple imputation modeling
 library(parallel) # For mclapply speeds up probability estimation 
-source("cleanSeq4.R")
+source("cleanSeq4.R") # Needed to read MassArray csv export 
 
 ##### Threshold setting #### 
 # 0.6931212 is default for external site
@@ -496,7 +497,7 @@ shinyServer(function(input, output) {
     # Code to remove samples below threshold from plot
     cat(paste("Removing data points below threshold", threshold, "from graph:\n"))
     index <- maxProbs > threshold
-    cat(names(maxProbs[!index]))
+    cat(names(maxProbs[!index]), "\n")
     new.probs2 <- probs2[,index]
     new.maxProbs <- maxProbs[index]
     new.maxProbsWhich <- maxProbsWhich[index]
@@ -560,7 +561,7 @@ shinyServer(function(input, output) {
       # Code to remove samples below threshold from plot
       cat(paste("Removing data points below threshold", threshold, "from graph:\n"))
       index <- maxProbs > threshold
-      cat(names(maxProbs[!index]))
+      cat(names(maxProbs[!index]), "\n")
       new.probs2 <- probs2[,index]
       new.maxProbs <- maxProbs[index]
       new.maxProbsWhich <- maxProbsWhich[index]
