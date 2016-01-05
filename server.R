@@ -511,7 +511,7 @@ shinyServer(function(input, output) {
     par(cex=1.3)
     par(cex.axis=1)
     
-    heading = paste("Sequenom subgroup prediction for", new.Total.No.of.Samples, "samples using 17 probes")
+    heading <- paste("Medulloblastoma subgroup call confidence intervals for", new.Total.No.of.Samples, "samples")
     
     boxplot(yaxt="n",xlab="",main=heading,ylab="Probability",new.probs2[,order(new.maxProbsWhich, new.maxProbs)],outpch=NA,ylim=c(0,1),las=2,
             col=new.maxProbsCol2[order(new.maxProbsWhich,new.maxProbs)] )
@@ -569,7 +569,7 @@ shinyServer(function(input, output) {
       new.maxProbsCol2 <- maxProbsCol2[index]
       new.Total.No.of.Samples <- length(maxProbs[index])
       
-      heading = paste("Sequenom subgroup prediction for", new.Total.No.of.Samples, "samples using 17 probes")
+      heading <- paste("Medulloblastoma subgroup call confidence intervals for", new.Total.No.of.Samples, "samples")
       
       png(file, height = 1280, width = 1440)
       par(mfrow=c(1,1))
