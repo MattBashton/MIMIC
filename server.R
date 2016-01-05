@@ -678,6 +678,7 @@ shinyServer(function(input, output) {
     betas <- cbind(Plex, betas)
     betas <- cbind(rownames(classified_data$Sample.test), betas)
     colnames(betas) <- c("Probe ID", colnames(betas)[-1])
+    betas <- betas[order(betas[,"Plex"], betas[,"Probe ID"]),]
     betas
   })
   
@@ -691,6 +692,7 @@ shinyServer(function(input, output) {
       betas <- cbind(Plex, betas)
       betas <- cbind(rownames(classified_data$Sample.test), betas)
       colnames(betas) <- c("Probe ID", colnames(betas)[-1])
+      betas <- betas[order(betas[,"Plex"], betas[,"Probe ID"]),]
       write.csv(betas, file, row.names = FALSE)
     }
   )
