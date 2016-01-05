@@ -12,7 +12,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
     
     sidebarPanel( # all the UI controls go in here
       width=3,
-      fileInput('file1', 'MassARRAY® CSV file upload',
+      fileInput('file1', 'MassARRAY® CSV file upload:',
                 accept=c('text/csv', 
                          'text/comma-separated-values,text/plain', 
                          '.csv')
@@ -25,12 +25,12 @@ shinyUI(fluidPage(theme = shinytheme("united"),
     mainPanel( # all of the output elements go here
       tabsetPanel(
         id = 'sequenom',
-        tabPanel('Classification Table', dataTableOutput('classification_table'), br(), downloadButton('downloadClassification', 'Download'),p(), br(), textOutput("time")),
-        #tabPanel('Classification Graph', plotOutput("classifierPlot", height = "640", width = "720"), br(), textOutput("time")),
-        tabPanel('Classification Graph', plotOutput("classifierPlot", height = "640", width = "auto"), br(), downloadButton('PlotDownload', 'Download'), p()),
-        tabPanel('Missing Probes Table', dataTableOutput('mp'), br(), downloadButton('downloadMissing', 'Download'), p()),
+        tabPanel('Classification Table', dataTableOutput('classification_table'), br(), downloadButton('downloadClassification', 'Download table as .csv'),p(), br(), textOutput("time")),
+        #tabPanel('Classification Plot', plotOutput("classifierPlot", height = "640", width = "720"), br(), textOutput("time")),
+        tabPanel('Classification Plot', plotOutput("classifierPlot", height = "640", width = "auto"), br(), downloadButton('PlotDownload', 'Download plot as high-res .png'), p()),
+        tabPanel('Informative Probes Table', dataTableOutput('mp'), br(), downloadButton('downloadMissing', 'Download table as .csv'), p()),
         tabPanel('Sample QC', br(), p(), textOutput("fs")),
-        tabPanel('β-values', dataTableOutput('Beta'), br(), downloadButton('downloadBeta', 'Download'), p()),
+        tabPanel('β-values', dataTableOutput('Beta'), br(), downloadButton('downloadBeta', 'Download table as .csv'), p()),
         tabPanel('About',
                  h4("MIMIC version 3.3.4p"),
                  br(),
@@ -43,7 +43,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
       ), # End of tabsetPanel
       br(),
       hr(),
-      p("WARNING: MIMIC is for research use only, and should only be used on samples with a confirmed histopathalogical background of medulloblastoma."),
+      p("WARNING: MIMIC is for research use only, and should only be used on samples with a confirmed histopathalogical background of medulloblastoma.  MassArray® is a registered trademark of Agena Bioscience."),
       hr(),
       img(src = "nicr.png"), img(src = "ncl.png"),
       br()

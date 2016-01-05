@@ -7,6 +7,7 @@ library(shiny)
 library(e1071) #for SVM classifier
 library(Amelia) #for multiple imputation modeling
 library(parallel) # For mclapply speeds up probability estimation 
+library(gtools) # Needed for numerically rather than lexicographically sorted strings
 source("cleanSeq4.R") # Needed to read MassArray csv export 
 
 ##### Threshold setting #### 
@@ -368,13 +369,18 @@ shinyServer(function(input, output) {
     classified_data <- classifier()
     if (is.null(classified_data)) return(NULL)
     results.df <- classified_data$results.df
+    # Change name to Subgroup Call of 2nd col
+    colnames(results.df)[2] <- "Subgroup Call"
+    # Add a probe QC column 
+    results.df[,4] <- "Pass"
+    colnames(results.df)[4] <- "Probe QC"
     failed.samples <- classified_data$failed.samples    
     
     # Apply threshold and label samples as unclassifiable 
     thresholded_results.df <- results.df
     for (i in 1:nrow(results.df)) {
       if (!results.df[i,"Confidence"] > threshold) {
-        thresholded_results.df[i,"Subgroup"] <- "Unclassifiable" 
+        thresholded_results.df[i,"Subgroup Call"] <- "Unclassifiable" 
         thresholded_results.df[i,"Confidence"] <- NA
       }
     }
@@ -385,12 +391,19 @@ shinyServer(function(input, output) {
       i <- 1
       new.results.df <- thresholded_results.df
       for (i in i:length(failed.samples)) {
-        new.results.df <- rbind(new.results.df, c(failed_sample_names[i], "Fail", NA))
+        new.results.df <- rbind(new.results.df, c(failed_sample_names[i], "-", NA, "Fail"))
       } 
+      # Now return the df but with NAs replaced by -
       new.results.df[is.na(new.results.df)] <- "-"
+      # Sort via sample ID (correctly)
+      new.results.df <- new.results.df[mixedorder(new.results.df[,1]),]
       return(new.results.df) 
+      # Where we don't have any failed samples simply return the df but with NAs
+      # replaced by -
     } else {
       thresholded_results.df[is.na(thresholded_results.df)] <- "-"
+      # Sort via sample ID (correctly)
+      thresholded_results.df <- thresholded_results.df[mixedorder(thresholded_results.df[,1]),]
       return(thresholded_results.df)
     }
     # End failed sample injector
@@ -399,18 +412,23 @@ shinyServer(function(input, output) {
   })
   
   output$downloadClassification <- downloadHandler(
-    filename = "MB_sequenom_classification.csv",
+    filename = "MB_classification.csv",
     content =  function(file) {
       classified_data <- classifier()
       if (is.null(classified_data)) return(NULL)
       results.df <- classified_data$results.df
+      # Change name to Subgroup Call of 2nd col
+      colnames(results.df)[2] <- "Subgroup Call"
+      # Add a probe QC column 
+      results.df[,4] <- "Pass"
+      colnames(results.df)[4] <- "Probe QC"
       failed.samples <- classified_data$failed.samples
       
       # Apply threshold and label samples as unclassifiable 
       thresholded_results.df <- results.df
       for (i in 1:nrow(results.df)) {
         if (!results.df[i,"Confidence"] > threshold) {
-          thresholded_results.df[i,"Subgroup"] <- "Unclassifiable" 
+          thresholded_results.df[i,"Subgroup Call"] <- "Unclassifiable" 
           thresholded_results.df[i,"Confidence"] <- NA
         }
       }
@@ -421,11 +439,20 @@ shinyServer(function(input, output) {
         i <- 1
         new.results.df <- thresholded_results.df
         for (i in i:length(failed.samples)) {
-          new.results.df <- rbind(new.results.df, c(failed_sample_names[i], "Fail", NA))
+          new.results.df <- rbind(new.results.df, c(failed_sample_names[i], "-", NA, "Fail"))
         } 
+        # Now return the df but with NAs replaced by -
+        new.results.df[is.na(new.results.df)] <- "-"
+        # Sort via sample ID (correctly)
+        new.results.df <- new.results.df[mixedorder(new.results.df[,1]),]
         write.csv(new.results.df, file, row.names = FALSE) 
+        # Where we don't have any failed samples simply return the df but with NAs
+        # replaced by -
       } else {
-        write.csv(thresholded_results.df, file, row.names = FALSE)  
+        thresholded_results.df[is.na(thresholded_results.df)] <- "-"
+        # Sort via sample ID (correctly)
+        thresholded_results.df <- thresholded_results.df[mixedorder(thresholded_results.df[,1]),]
+        write.csv(thresholded_results.df, file, row.names = FALSE) 
       }
       # End failed sample injector
       
@@ -436,24 +463,25 @@ shinyServer(function(input, output) {
   
   
   # Output Missing probe summary ####
+  # Note now changed to ouput "informative probes"
   
   output$mp<- renderDataTable({
     classified_data <- classifier()
     if (is.null(classified_data)) return(NULL)
     missing_summary <- classified_data$missing_summary
-    missing_table <- data.frame(rownames(missing_summary), missing_summary, row.names=NULL)
-    colnames(missing_table) <- c("Sample", "Number of Missing Probes")
+    missing_table <- data.frame(rownames(missing_summary), 17-missing_summary[, 1], row.names=NULL)
+    colnames(missing_table) <- c("Sample", "Number of Informative Probes")
     missing_table
   })
   
   output$downloadMissing <- downloadHandler(
-    filename = "MB_sequenom_missing_probes.csv",
+    filename = "MB_informative_probes.csv",
     content =  function(file) {
       classified_data <- classifier()
       if (is.null(classified_data)) return(NULL)
       missing_summary <- classified_data$missing_summary
-      missing_table <- data.frame(rownames(missing_summary), missing_summary, row.names=NULL)
-      colnames(missing_table) <- c("Sample", "Number of Missing Probes")
+      missing_table <- data.frame(rownames(missing_summary), 17-missing_summary[, 1], row.names=NULL)
+      colnames(missing_table) <- c("Sample", "Number of Informative Probes")
       write.csv(missing_table, file, row.names = FALSE)
     }
   )
@@ -472,7 +500,7 @@ shinyServer(function(input, output) {
     probe_threshold <- classified_data$probe_threshold
     
     if (length(failed.samples) > 0) {
-      c(length(failed.samples), "sample(s) failed QC having", probe_threshold, "or more missing probes:", paste(failed_sample_names, collapse = ", "))
+      c(length(failed.samples), "sample(s) failed probe QC having", probe_threshold, "or more missing probes:", paste(failed_sample_names, collapse = ", "))
     } else if (length(failed.samples) == 0) {
       "All samples passed missing probe QC"
     }
@@ -545,7 +573,7 @@ shinyServer(function(input, output) {
   ## MB totally reworked to get sane graph of WNT, SHH, Grp3, Grp4
   output$PlotDownload <- downloadHandler(
     
-    filename = "MB_sequenom_classification.png",
+    filename = "MB_classification.png",
     content = function(file) {
       
       classified_data <- classifier()
@@ -652,7 +680,7 @@ shinyServer(function(input, output) {
   })
   
   output$downloadBeta <- downloadHandler(
-    filename = "MB_sequenom_beta_values.csv",
+    filename = "MB_beta_values.csv",
     content = function(file) {
       classified_data <- classifier()
       if (is.null(classified_data)) return(NULL)
