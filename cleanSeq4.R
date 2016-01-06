@@ -1,7 +1,14 @@
+## Function to read in MassArray ooutput .csv file and return Beta values
+
+## Testing only (MB)
+#filename <- "~/MIMIC/www/test_samples.csv"
+#threshold <- 0.2
+
 cleanSeq4 <- function(threshold=0.2, filename)
 {
   ## Modified by MB 17th Feb 2015
   ## Check for comment row 
+ 
   skip <- 0
   if (length(grep("iPLEX", readLines(filename)[1])) != 0) {
     # Comment row present set skip to 1
@@ -101,7 +108,6 @@ cleanSeq4 <- function(threshold=0.2, filename)
     
   }
   
-  
   ## How many failures are there beyond the 5 we know about
   print(apply(output,2, function(x) length(x[is.na(x)])-5))
   
@@ -112,7 +118,25 @@ cleanSeq4 <- function(threshold=0.2, filename)
   ## Old File based output removed, we now return
   output2 <- output[order(rownames(output)),order(colnames(output))]
   #write.table(output2, file=outputName,sep=",")
-  return(output2)
+  #return(output2)
+  
+  ## MB 6th of Jan 2016, code to extract BS conversion efficiency and return a
+  ## list with existing data and new BS conversion efficiency data
+  
+  # Extract data for each sample on the Conv probe from df data
+  BS_Eff <- data[data$Assay.Id == "Conv",c("Sample","Assay.Id","height_2","height_3")]
+  BS_Eff_vect <- 100 - (BS_Eff$height_2/BS_Eff$height_3 * 100)
+  BS_Eff[,"BS_Eff"] <- BS_Eff_vect
+  # Set rownames
+  rownames(BS_Eff) <- BS_Eff[,1]
+  # Remove unwanted cols
+  BS_Eff <- BS_Eff[,c(1,5)]
+  
+  # Make a unified list to return which has the old output (output2) and the new
+  # BS_Eff data frame
+  output3 <- list(output2, BS_Eff)
+  return(output3)
+  
 }
 
 

@@ -55,7 +55,16 @@ shinyServer(function(input, output) {
       # For raw data use cleanSeq4
       #incProgress(0.10, detail = paste("Processing and cleaning raw data"))
       # File system less data passing
-      Sample.test <- cleanSeq4(filename=inFile$datapath)
+      
+      ## MB changes here for legacy code compatibility and new BS conversion effiency data.
+      #Sample.test <- cleanSeq4(filename=inFile$datapath)
+      returned_data <- cleanSeq4(filename=inFile$datapath)
+      # Re-create old Sample.tests
+      Sample.test <- returned_data[[1]]
+      # New BS_Eff 
+      BS_Eff <- returned_data[[2]]
+      
+      
       #raw_betas <- Sample.test
       
       # For cleaned data
@@ -338,7 +347,8 @@ shinyServer(function(input, output) {
                             maxProbs,
                             maxProbsCol,
                             maxProbsCol2,
-                            time)
+                            time,
+                            BS_Eff)
     
     names(classified_data) <- c("results.df",
                                 "Sample.test",
@@ -352,7 +362,8 @@ shinyServer(function(input, output) {
                                 "maxProbs",
                                 "maxProbsCol",
                                 "maxProbsCol2",
-                                "time")
+                                "time",
+                                "BS_Eff")
     
     return(classified_data)
     
@@ -478,7 +489,7 @@ shinyServer(function(input, output) {
   # Output Missing probe summary ####
   # Note now changed to ouput "informative probes"
   
-  output$mp<- renderDataTable({
+  output$mp <- renderDataTable({
     classified_data <- classifier()
     if (is.null(classified_data)) return(NULL)
     missing_summary <- classified_data$missing_summary
@@ -505,7 +516,7 @@ shinyServer(function(input, output) {
   
   
   # Output number of failed samples #
-  output$fs<- renderText({
+  output$fs <- renderText({
     classified_data <- classifier()
     if (is.null(classified_data)) return(NULL)
     
@@ -528,7 +539,7 @@ shinyServer(function(input, output) {
   # Output number of unclassifable samples 
   
   # List samples (if any) that could not be classified above the threshold
-  output$fc<- renderText({
+  output$fc <- renderText({
     classified_data <- classifier()
     if (is.null(classified_data)) return(NULL)
   
@@ -544,6 +555,53 @@ shinyServer(function(input, output) {
   })
   
   ###################################
+  
+  
+  # Output BS con eff ###############
+  
+  output$BS_Eff <- renderDataTable({
+    classified_data <- classifier()
+    if (is.null(classified_data)) return(NULL)
+    
+    BS_Eff_table <- classified_data$BS_Eff
+    
+    # Convert sample name factor to character vector
+    BS_Eff_table[,1] <- as.character(BS_Eff_table[,1])
+    # Change col name
+    colnames(BS_Eff_table)[2] <- "Bisulphite conversion efficiency %"
+    # New Order
+    BS_Eff_table <- BS_Eff_table[mixedorder(BS_Eff_table[,1]),]
+    # Round down percentages
+    is.num <- sapply(BS_Eff_table, is.numeric)
+    BS_Eff_table[is.num] <- lapply(BS_Eff_table[is.num], round, 1)
+    BS_Eff_table
+    
+  })
+  
+  
+  output$downloadBS_Eff <- downloadHandler(
+    filename = "MB_BS_Eff.csv",
+    content =  function(file) {
+      classified_data <- classifier()
+      if (is.null(classified_data)) return(NULL)
+      
+      BS_Eff_table <- classified_data$BS_Eff
+      
+      # Convert sample name factor to character vector
+      BS_Eff_table[,1] <- as.character(BS_Eff_table[,1])
+      # Change col name
+      colnames(BS_Eff_table)[2] <- "Bisulphite conversion efficiency %"
+      # New Order
+      BS_Eff_table <- BS_Eff_table[mixedorder(BS_Eff_table[,1]),]
+      # Round down percentages
+      is.num <- sapply(BS_Eff_table, is.numeric)
+      BS_Eff_table[is.num] <- lapply(BS_Eff_table[is.num], round, 1)
+      write.csv(BS_Eff_table, file, row.names = FALSE)
+    }
+  )
+  
+  ###################################
+  
   
   # Output graph ####################
   ## MB totally reworked to get sane graph of WNT, SHH, Grp3, Grp4
@@ -605,6 +663,7 @@ shinyServer(function(input, output) {
     
   })
   # End output graph ################
+  
   
   # Output graph download ####################
   ## MB totally reworked to get sane graph of WNT, SHH, Grp3, Grp4
@@ -670,7 +729,7 @@ shinyServer(function(input, output) {
   
   # Output time taken ###############
   
-  output$time<- renderText({
+  output$time <- renderText({
     classified_data <- classifier()
     if (is.null(classified_data)) return(NULL)
     
