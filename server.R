@@ -536,7 +536,7 @@ shinyServer(function(input, output) {
     unclassifiable <- results.df[results.df[3] < threshold, 1]
   
     if (length(unclassifiable) > 0) {
-      c(length(unclassifiable), "samples(s) could not be confidently assigned a subgroup call:", paste(unclassifiable, collapse = ", "))
+      c(length(unclassifiable), "samples(s) passing Probe QC could not be confidently assigned a subgroup call:", paste(unclassifiable, collapse = ", "))
     } else if (length(unclassifiable) == 0) {
       "All samples were successfully assigned a subgroup"
     }
