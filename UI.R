@@ -40,7 +40,22 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                  p(strong("Project concept and sequenom file parser: "), a("Ed Schwalbe", href="mailto:ed.schwalbe@newcastle.ac.uk?subject=Sequenom classifier website")),
                  br(),
                  p("Insert blurb here")
-        )
+        ),
+        tabPanel('Help',h4("How to use our Classifier"),
+                 p("MIMIC will classify MassARRAY® medulloblastoma methylation data in to one of four molecular subgroups.  To use the classifier follow the steps outlined below:"),
+                 tags$ol(
+                  tags$li("A Comma separated value (.csv) file produced by the MassARRAY® scanner is needed as input to use the classifier.  If you would like to test drive the classifier,  or would like to see how it should be formatted a test file can be downloaded using the link in the grey box on the left."),
+                  p(), img(src = "step1.png"), p(), br(),
+                  tags$li("A MassARRAY® .csv file can then be uploaded by clicking on the 'Chose File' or 'Browse...' button on the left, once uploaded the classification happens automatically."),
+                  p(), img(src = "step2.png"), p(), br(),
+                  tags$li("By default the Classification Table output is preselected and will present you with a four subgroup Medulloblastoma classification for each of your samples.  Other tabs presenting other information can then be accessed by clicking their names present at the top of the main panel."),
+                  p(), img(src = "step3.png"), p(), br(),
+                  tags$li("The contents of Tables can be downloaded by clicking the grey download button, these .csv files can then be loaded into Excel or other spreadsheet software if required."),
+                  p(), img(src = "step4.png"), p(), br(),
+                  tags$li("The Classification Plot can also be downloaded as a .png by clicking on the grey Download button at the bottom of the Classification Plot tab."),
+                  p(), img(src = "step5.png"), br()
+                 ) # End of list
+                 ) # End of Help tab
       ), # End of tabsetPanel
       br(),
       hr(),
