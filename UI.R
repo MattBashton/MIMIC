@@ -12,12 +12,12 @@ shinyUI(fluidPage(theme = shinytheme("united"),
     
     sidebarPanel( # all the UI controls go in here
       width=3,
-      fileInput('file1', 'MassARRAY® CSV file upload:',
+      fileInput('file1', 'MassARRAY CSV file upload:',
                 accept=c('text/csv', 
                          'text/comma-separated-values,text/plain', 
                          '.csv')
       ),
-      helpText("MIMIC will classify MassARRAY® medulloblastoma methylation data in to one of four molecular subgroups"),
+      helpText("MIMIC will classify MassARRAY medulloblastoma methylation data in to one of four molecular subgroups"),
       "Download test data to try classifier:", a(href="test_samples.csv", "Test CSV file", target="_blank")
     ), # End sidebarPanel
     
@@ -28,25 +28,59 @@ shinyUI(fluidPage(theme = shinytheme("united"),
         tabPanel('Classification Table', dataTableOutput('classification_table'), br(), helpText("Unclassifiable samples are those for which a confident subgroup call could not be made"), br(), downloadButton('downloadClassification', 'Download table as .csv'),p(), br(), textOutput("time")),
         #tabPanel('Classification Plot', plotOutput("classifierPlot", height = "640", width = "720"), br(), textOutput("time")),
         tabPanel('Classification Plot', plotOutput("classifierPlot", height = "640", width = "auto"), br(), helpText("Unclassifiable and Probe QC failed samples are not shown in this plot"), br(), downloadButton('PlotDownload', 'Download plot as high-res .png'), p()),
-        tabPanel('Informative Probes Table', dataTableOutput('mp'), br(), downloadButton('downloadMissing', 'Download table as .csv'), p()),
+        tabPanel('Informative Probes Table', dataTableOutput('mp'), br(), downloadButton('downloadMissing', 'Download table as .csv')),
         tabPanel('Sample QC', br(), p(), textOutput("fs"), br(), textOutput("fc")),
-        tabPanel('Bisulphite conversion efficiency', dataTableOutput("BS_Eff"), br(), downloadButton('downloadBS_Eff', 'Download table as .csv')),
-        tabPanel('β-values', dataTableOutput('Beta'), br(), downloadButton('downloadBeta', 'Download table as .csv'), p()),
+        tabPanel('Bisulphite Conversion Efficiency', dataTableOutput("BS_Eff"), br(), downloadButton('downloadBS_Eff', 'Download table as .csv')),
+        tabPanel('β-values', dataTableOutput('Beta'), br(), downloadButton('downloadBeta', 'Download table as .csv')),
         tabPanel('About',
                  h4("MIMIC version 3.3.4p"),
                  br(),
-                 p(strong("Machine leanring and classifier code: "), a("Reza Rafiee", href="mailto:Gholamreza.Rafiee@newcastle.ac.uk?subject=Sequenom classifier website")),
-                 p(strong("Shiny web code and adaptation: "), a("Matthew Bashton", href="mailto:matthew.bashton@newcastle.ac.uk?subject=Sequenom classifier website")),
-                 p(strong("Project concept and sequenom file parser: "), a("Ed Schwalbe", href="mailto:ed.schwalbe@newcastle.ac.uk?subject=Sequenom classifier website")),
+                 p("Machine leanring and classifier code: ", a("Reza Rafiee", href="mailto:Gholamreza.Rafiee@newcastle.ac.uk?subject=Sequenom classifier website")),
+                 p("Shiny web app code and adaptation: ", a("Matthew Bashton", href="mailto:matthew.bashton@newcastle.ac.uk?subject=Sequenom classifier website")),
+                 p("Project concept and sequenom file parser: ", a("Ed Schwalbe", href="mailto:ed.schwalbe@newcastle.ac.uk?subject=Sequenom classifier website")),
                  br(),
-                 p("Insert blurb here")
+                 h4("Overview"),
+                 p("MIMIC will classify MassARRAY medulloblastoma methylation data in to one of four molecular subgroups: WNT, SHH, Group 3 and Group 4."),
+                 p("In summary the classifier works as described below:"),
+                 tags$ol(
+                   tags$li("We use 17 different methylation probes in an",
+                           a("Agena iPLEX assay", href="http://agenabio.com/products/applications/genotyping-and-mutation-detection/"),
+                           ", the readout is performed by the",
+                           a("MassARRAY", href="http://agenabio.com/products/massarray-system/"),
+                           "mass spectrometer."), p(),
+                   tags$li("Peak heights from the Mass Spectrometer, corresponding to the 17 probes for each sample are outputted as a comma separated .csv file; these values are submitted to MIMIC and converted to β values for each probe."), p(),
+                   tags$li("The number of probes successfully reporting β values out of the 17 is assessed for each sample,", 
+                           a("imputation", href="https://en.wikipedia.org/wiki/Imputation_%28statistics%29"),
+                           "(exploiting our own MassArray cohort) is used to impute any missing values using", 
+                           a("multiple imputation (MI)", href = "https://en.wikipedia.org/wiki/Imputation_%28statistics%29#Multiple_imputation"),
+                           "modelling utilising a Bootstrap",
+                           a("Expectation Maximisation", href="https://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm"),
+                           "(BEM) algorithm using the",
+                           a("Amelia package", href = "http://gking.harvard.edu/amelia"),
+                           ".", "We can efficiently impute missing values of up to 6 missing probes, if a sample has more missing values it is said to have failed Probe QC and is not classified."), p(),
+                   tags$li("A multi-class optimised ", a("Support Vector Machine", href = "https://en.wikipedia.org/wiki/Support_vector_machine"), "(SVM) validated and trained on our extensive 450k medulloblastoma cohort is used to robustly assign a subgroup to samples by their 17 β values."), p(),
+                   tags$ul(
+                     tags$li("Our SVM is validated using a bootstrapping technique via 1000 random iterations of 80% of the training set, confidence interval derived from this is plotted on the Classification Graph as a box plot."), p(),
+                     tags$li("The final probability assignment for subgroup call is made, by creating an SVM model with the whole 450 training set; these probabilities are given in the Classification Table in the initial tab."), p(),
+                     tags$li("Calls made with a probability below our predefined threshold are consider unreliable and sampled will be labeled as Unclassifiable in the Classification Table, these samples will not be plotted in the Classification Graph."), p()
+                   ),
+                   tags$li("Various post processing and formatting operations on the data take place with the interactive website being implemented in the R", a("Shiny", href = "http://shiny.rstudio.com"), "reactive web application framework."), p()
+                 ), # End ol
+                 p("For a typical dataset with 14 samples this whole computational procedure will take around 4 seconds - total classification time is given below the Classification Graph. "),
+                 p("For more detailed explanation of our classifier including various optimisation and validation exercise see our manuscript and corresponding supplementary information (manuscript in preparation)."),
+                 p(), br(),
+                 h4("Reference"),
+                 p("A manuscript is in preparation."),
+                 p(), br(),
+                 h4("Download"),
+                 "The R code for this", a("Shiny", href = "http://shiny.rstudio.com/"), "based website including training and validation cohorts can be downloaded from", a("GitHub", href = "https://github.com/MattBashton/MIMIC"), "the website can also be run locally using", a("Rstudio", href = "https://www.rstudio.com/"), "instructions and dependancies are outlined on GitHub."
         ),
         tabPanel('Help',h4("How to use our Classifier"),
-                 p("MIMIC will classify MassARRAY® medulloblastoma methylation data in to one of four molecular subgroups.  To use the classifier follow the steps outlined below:"),
+                 p("MIMIC will classify MassARRAY medulloblastoma methylation data in to one of four molecular subgroups.  To use the classifier follow the steps outlined below:"),
                  tags$ol(
-                  tags$li("A Comma separated value (.csv) file produced by the MassARRAY® scanner is needed as input to use the classifier.  If you would like to test drive the classifier,  or would like to see how it should be formatted a test file can be downloaded using the link in the grey box on the left."),
+                  tags$li("A Comma separated value (.csv) file produced by the MassARRAY scanner is needed as input to use the classifier.  If you would like to test drive the classifier,  or would like to see how it should be formatted a test file can be downloaded using the link in the grey box on the left."),
                   p(), img(src = "step1.png"), p(), br(),
-                  tags$li("A MassARRAY® .csv file can then be uploaded by clicking on the 'Chose File' or 'Browse...' button on the left, once uploaded the classification happens automatically."),
+                  tags$li("A MassARRAY .csv file can then be uploaded by clicking on the 'Chose File' or 'Browse...' (browser dependent) button on the left, once uploaded the classification happens automatically."),
                   p(), img(src = "step2.png"), p(), br(),
                   tags$li("By default the Classification Table output is preselected and will present you with a four subgroup Medulloblastoma classification for each of your samples.  Other tabs presenting other information can then be accessed by clicking their names present at the top of the main panel."),
                   p(), img(src = "step3.png"), p(), br(),
@@ -54,19 +88,23 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                   p(), img(src = "step4.png"), p(), br(),
                   tags$li("The Classification Plot can also be downloaded as a .png by clicking on the grey Download button at the bottom of the Classification Plot tab."),
                   p(), img(src = "step5.png"), br()
-                 ) # End of list
+                 ), # End of list
+                 p(), br(),
+                 h4("Suppport"),
+                 "If you have any issues with using MIMIC please contact ",
+                 a("Matthew Bashton.", href="mailto:matthew.bashton@newcastle.ac.uk?subject=Sequenom classifier website")
                  ) # End of Help tab
       ), # End of tabsetPanel
       br(),
       hr(),
-      p("WARNING: MIMIC is for research use only, and should only be used on samples with a confirmed histopathalogical background of medulloblastoma.  MassArray® is a registered trademark of Agena Bioscience."),
+      p("WARNING: MIMIC is for research use only, and should only be used on samples with a confirmed histopathalogical background of medulloblastoma.  MassArray is a registered trademark of Agena Bioscience."),
       hr(),
       img(src = "nicr.png"), img(src = "ncl.png"), img(src = "cruk_c_logo.png"),
       br()
     ) # End of mainPanel
     
   ) # End sidebarLayout
-  
+
 ) # End fluidPage
 
 ) # End shinyUI
