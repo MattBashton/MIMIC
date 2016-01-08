@@ -50,9 +50,10 @@ cleanSeq4 <- function(threshold=0.2, filename)
   data <- data[grep("^NTC", data$Sample, invert = T), ]
   
   
+  ## Skip this for production code since could have only 17, or 17 + BS efficiency control
   ## Remove any incomplete samples without 28 probes
-  x <- table(data$Sample)
-  data <- data[!data$Sample %in% names(x)[x<28 | x>28],]
+  #x <- table(data$Sample)
+  #data <- data[!data$Sample %in% names(x)[x<28 | x>28],]
   data$Sample <- factor(data$Sample)
   
   ## T formats - these are calculated as 1 - avgFreq1. (i.e. avgFreq2)
