@@ -92,7 +92,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                  p(), br(),
                  h4("Input file format"),
                  "The input file used for this version of MIMIC is exported from the Agena MassARRAY software.  It is key that all input lines for a particular sample have a unifying sample name in the second ", tags$i("Sample Description"), "column.  The ", tags$i("Assay Id"), "column will also need to have appropriately named probe names we provide an example file in", a(href="test_samples.csv", "test_samples.csv", target="_blank"), p(),
-                 p("Probes names (corresponding to 450k probes) we use are:
+                 p("Probe names (corresponding to 450k probes) we use are:
                    cg00583535,
                    cg18788664,
                    cg08123444,
