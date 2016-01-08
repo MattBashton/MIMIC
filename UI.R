@@ -61,7 +61,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                    tags$li("A multi-class optimised ", a("Support Vector Machine", href = "https://en.wikipedia.org/wiki/Support_vector_machine"), "(SVM) validated and trained on our extensive 450k medulloblastoma cohort is used to robustly assign a subgroup to samples by their 17 β values."), p(),
                    tags$ul(
                      tags$li("Our SVM is validated using a bootstrapping technique via 1000 random iterations of 80% of the training set, confidence interval derived from this is plotted on the Classification Graph as a box plot."), p(),
-                     tags$li("The final probability assignment for subgroup call is made, by creating an SVM model with the whole 450 training set; these probabilities are given in the Classification Table in the initial tab."), p(),
+                     tags$li("The final probability assignment for a subgroup call is made by creating an SVM model with the whole 450 training set; these probabilities are given in the Classification Table in the initial tab."), p(),
                      tags$li("Calls made with a probability below our predefined threshold are consider unreliable and sampled will be labeled as Unclassifiable in the Classification Table, these samples will not be plotted in the Classification Graph."), p()
                    ),
                    tags$li("Various post processing and formatting operations on the data take place with the interactive website being implemented in the R", a("Shiny", href = "http://shiny.rstudio.com"), "reactive web application framework."), p()
