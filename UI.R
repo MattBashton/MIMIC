@@ -121,7 +121,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
       ), # End of tabsetPanel
       br(),
       hr(),
-      p("WARNING: MIMIC is for research use only, and should only be used on samples with a confirmed histopathological background of medulloblastoma.  MassArray is a registered trademark of Agena Bioscience."),
+      p("WARNING: MIMIC is for research use only, and should only be used on samples with a confirmed histopathological diagnosis of medulloblastoma.  MassArray is a registered trademark of Agena Bioscience."),
       hr(),
       img(src = "nicr.png"), img(src = "ncl.png"),
       br()
