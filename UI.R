@@ -1,5 +1,5 @@
 ## Matthew Basthon 2014-2016
-## Shiny UI for test Sequenom classifier 
+## Shiny UI for MassARRAY classifier 
 
 library(shiny) # load shiny at beginning at both scripts
 library(shinythemes)
@@ -37,7 +37,7 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                  br(),
                  p("Machine learning and classifier code: ", a("Reza Rafiee", href="mailto:Gholamreza.Rafiee@newcastle.ac.uk?subject=Sequenom classifier website")),
                  p("Shiny web app code and adaptation: ", a("Matthew Bashton", href="mailto:matthew.bashton@newcastle.ac.uk?subject=Sequenom classifier website")),
-                 p("Project concept and sequenom file parser: ", a("Ed Schwalbe", href="mailto:ed.schwalbe@newcastle.ac.uk?subject=Sequenom classifier website")),
+                 p("Project concept and MassARRAY file parser: ", a("Ed Schwalbe", href="mailto:ed.schwalbe@newcastle.ac.uk?subject=Sequenom classifier website")),
                  br(),
                  h4("Overview"),
                  p("MIMIC will classify MassARRAY medulloblastoma methylation data in to one of four molecular subgroups: WNT, SHH, Group 3 and Group 4."),
