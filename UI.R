@@ -1,27 +1,27 @@
 ## Matthew Basthon 2014-2016
-## Shiny UI for MassARRAY classifier 
+## Shiny UI for MassARRAY classifier
 
 library(shiny) # load shiny at beginning at both scripts
 library(shinythemes)
 shinyUI(fluidPage(theme = shinytheme("united"),
 
-  titlePanel("MIMIC: MInimal MethylatIon Classifier"), # give the interface a title 
-  
+  titlePanel("MIMIC: MInimal MethylatIon Classifier"), # give the interface a title
+
   br(),
   sidebarLayout(
-    
+
     sidebarPanel( # all the UI controls go in here
       width=3,
       fileInput('file1', 'MassARRAY CSV file upload:',
-                accept=c('text/csv', 
-                         'text/comma-separated-values,text/plain', 
+                accept=c('text/csv',
+                         'text/comma-separated-values,text/plain',
                          '.csv')
       ),
       helpText("MIMIC will classify MassARRAY medulloblastoma methylation data in to one of four molecular subgroups"),
       "Download test data to try classifier:", a(href="test_samples.csv", "Test CSV file", target="_blank")
     ), # End sidebarPanel
-    
-    
+
+
     mainPanel( # all of the output elements go here
       tabsetPanel(
         id = 'sequenom',
@@ -49,9 +49,9 @@ shinyUI(fluidPage(theme = shinytheme("united"),
                            a("MassARRAY", href="http://agenabio.com/products/massarray-system/"),
                            "mass spectrometer."), p(),
                    tags$li("Peak heights from the Mass Spectrometer, corresponding to the 17 probes for each sample are outputted as a comma separated .csv file; these values are submitted to MIMIC and converted to β values for each probe."), p(),
-                   tags$li("The number of probes successfully reporting β values out of the 17 is assessed for each sample,", 
+                   tags$li("The number of probes successfully reporting β values out of the 17 is assessed for each sample,",
                            a("imputation", href="https://en.wikipedia.org/wiki/Imputation_%28statistics%29"),
-                           "(exploiting our own MassArray cohort) is used to impute any missing values using", 
+                           "(exploiting our own MassArray cohort) is used to impute any missing values using",
                            a("multiple imputation (MI)", href = "https://en.wikipedia.org/wiki/Imputation_%28statistics%29#Multiple_imputation"),
                            "modelling utilising a Bootstrap",
                            a("Expectation Maximisation", href="https://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm"),
@@ -121,12 +121,12 @@ shinyUI(fluidPage(theme = shinytheme("united"),
       ), # End of tabsetPanel
       br(),
       hr(),
-      p("WARNING: MIMIC is for research use only, and should only be used on samples with a confirmed histopathological diagnosis of medulloblastoma.  MassArray is a registered trademark of Agena Bioscience."),
+      p("WARNING: MIMIC is for research use only, and should only be used on samples with a confirmed histopathological diagnosis of medulloblastoma.  MassARRAY is a registered trademark of Agena Bioscience."),
       hr(),
       img(src = "nicr.png"), img(src = "ncl.png"),
       br()
     ) # End of mainPanel
-    
+
   ) # End sidebarLayout
 
 ) # End fluidPage
