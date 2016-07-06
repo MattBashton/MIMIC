@@ -112,6 +112,8 @@ cleanSeq4 <- function(threshold=0.2, filename)
   }
 
   ## How many failures are there beyond the 5 we know about
+  cat("\n\n")
+  cat("Number of failures:\n")
   print(apply(output,2, function(x) length(x[is.na(x)])-5))
 
   ## Remove Conv row, if present
