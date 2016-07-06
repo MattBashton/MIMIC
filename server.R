@@ -627,20 +627,32 @@ shinyServer(function(input, output) {
 
   # List samples (if any) that could not be classified above the threshold
   output$fc <- renderText({
+    
     classified_data <- classifier()
     if (is.null(classified_data)) return(NULL)
-
-    results.df <- classified_data$results.df
-    unclassifiable <- results.df[results.df[3] < threshold, 1]
-
-    if (length(unclassifiable) > 0) {
-      c(length(unclassifiable), "samples(s) passing Probe QC could not be confidently assigned a subgroup call:", paste(unclassifiable, collapse = ", "))
-    } else if (length(unclassifiable) == 0) {
-      "All samples were successfully assigned a subgroup"
+    
+    # Now check for no of samples, if more than 0 run existing code
+    Total.No.of.Samples <- classified_data$Total.No.of.Samples
+    
+    if(Total.No.of.Samples > 0) {
+      # Now run existing code
+      
+      results.df <- classified_data$results.df
+      unclassifiable <- results.df[results.df[3] < threshold, 1]
+      
+      if (length(unclassifiable) > 0) {
+        c(length(unclassifiable), "samples(s) passing Probe QC could not be confidently assigned a subgroup call:", paste(unclassifiable, collapse = ", "))
+      } else if (length(unclassifiable) == 0) {
+        "All samples were successfully assigned a subgroup"
+      }
+      
+      # End Total.No.of.Samples > 0
+    } else if (Total.No.of.Samples == 0) {
+      "All samples failed Probe QC, no samples can be classified"
     }
-
+    
   })
-
+  
   ###################################
 
 
