@@ -219,7 +219,7 @@ shinyServer(function(input, output) {
         train.beta <- Trainingset450k17 #mat_data_training
         amount <- round(0.8*nrow(t(train.beta)))
         
-        sel2<- lapply(1:x, function(i) {
+        sel2 <- lapply(1:x, function(i) {
           set.seed(i)
           sample(1:nrow(t(train.beta)), amount, replace=F)
         })
