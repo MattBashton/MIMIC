@@ -438,6 +438,7 @@ shinyServer(function(input, output) {
       
       # Apply threshold and label samples as unclassifiable
       thresholded_results.df <- results.df
+      i <- 1
       for (i in 1:nrow(results.df)) {
         if (!results.df[i,"Confidence"] > threshold) {
           thresholded_results.df[i,"Subgroup Call"] <- "Unclassifiable"
@@ -516,6 +517,7 @@ shinyServer(function(input, output) {
         
         # Apply threshold and label samples as unclassifiable
         thresholded_results.df <- results.df
+        i <- 1
         for (i in 1:nrow(results.df)) {
           if (!results.df[i,"Confidence"] > threshold) {
             thresholded_results.df[i,"Subgroup Call"] <- "Unclassifiable"
