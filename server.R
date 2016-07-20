@@ -645,7 +645,7 @@ shinyServer(function(input, output) {
       if (length(unclassifiable) > 0) {
         c(length(unclassifiable), "samples(s) passing Probe QC could not be confidently assigned a subgroup call:", paste(unclassifiable, collapse = ", "))
       } else if (length(unclassifiable) == 0) {
-        "All samples were successfully assigned a subgroup"
+        "All samples passing Probe QC were successfully assigned a subgroup"
       }
       
       # End Total.No.of.Samples > 0
