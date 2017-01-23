@@ -1,6 +1,6 @@
 ## Shiny server for MB MassArray Classification
 ## Matthew Bashton 2014-2016
-## Based on classifier code written by Rezza Rafiee
+## Based on classifier code written by Reza Rafiee
 
 ## load libraries
 library(shiny)
